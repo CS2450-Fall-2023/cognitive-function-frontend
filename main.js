@@ -1,5 +1,19 @@
 const questions = [
 	{
+		"id": "question_0",
+		"title": "Question 0",
+		"description": "Description for Question 0",
+		"relatedQuestions": [
+			"question_1",
+			"question_2",
+			"question_3",
+			"question_4",
+		]
+	},
+
+
+
+	{
 		"id": "question_1",
 		"title": "Question 1",
 		"description": "Description for Question 1",
@@ -147,28 +161,39 @@ const questions = [
 	},
 ];
 
-
 document.addEventListener('DOMContentLoaded', () => {
-	let initialQuestions = ["question_1", "question_2", "question_3", "question_4"].map((id) => {
-		return questions.find((question) => question.id === id);
-	});
-
-	console.log(initialQuestions);
-
-	redrawQuestions(initialQuestions);
+	redrawQuestions("question_0");
 })
 
-function redrawQuestions(questions) {
+function redrawQuestions(currentQuestion) {
 	const questionList = document.getElementById('questions');
 	questionList.innerHTML = '';
 
-	questions.forEach((question, i) => {
+	let relatedQuestions = questions
+		.find(question => question.id === currentQuestion)
+		.relatedQuestions
+		.map(questionId => questions.find(question => question.id === questionId));
+
+	relatedQuestions.forEach((question, i) => {
 		const questionItem = document.createElement('li');
+
 		questionItem.innerHTML = `
-			<h2>${question.title}</h2>
-			<p>${question.description}</p>
-			<button>Pick this</button>
+		<h2>${question.title}</h2>
+		<p>${question.description}</p>
 		`;
+
+		// if (question.relatedQuestions !== null) {
+		let questionButton = document.createElement('button');
+		questionButton.innerText = 'Pick this';
+
+		questionButton.addEventListener('click', () => {
+			if (question.relatedQuestions !== null) {
+				redrawQuestions(question.id);
+			}
+		});
+		questionItem.appendChild(questionButton);
+		// }
+
 
 		questionList.appendChild(questionItem);
 	});
